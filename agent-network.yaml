@@ -14,7 +14,7 @@ registry:
             card:
               name: Help Center Agent
               description: Searches the IT knowledge base for answers to common issues. Returns relevant articles with step-by-step instructions.
-              url: http://localhost:8080/helpCenterAgent
+              url: ${help_center_agent_connection.url}
               protocolVersion: 0.3.0
               version: 1.0.0
               capabilities:
@@ -52,7 +52,7 @@ registry:
             card:
               name: License Procurement Agent
               description: Checks software license availability and provisions licenses for employees.
-              url: http://localhost:8080/licenseProcurementAgent
+              url: ${license_procurement_agent_connection.url}
               protocolVersion: 0.3.0
               version: 1.0.0
               capabilities:
@@ -136,14 +136,6 @@ context:
       authentication:
         kind: apiKey
         apiKey: ${openai.apiKey}
-    # bedrock_openai_connection:
-    #   kind: llm
-    #   ref:
-    #     name: bedrock_openai
-    #   url: https://bedrock-mantle.us-east-2.api.aws/openai/v1
-    #   authentication:
-    #     kind: apiKey
-    #     apiKey: ${openai.apiKey}
 brokers:
   it_help_investigation:
     kind: AgentScript

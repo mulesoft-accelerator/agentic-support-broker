@@ -4,7 +4,7 @@ info:
   version: v1
 registry:
   agents:
-    help_center_agent:
+    helpCenterAgent:
       info:
         label: Help Center Agent
       metadata:
@@ -14,7 +14,7 @@ registry:
             card:
               name: Help Center Agent
               description: Searches the IT knowledge base for answers to common issues. Returns relevant articles with step-by-step instructions.
-              url: ${help_center_agent_connection.url}
+              url: ${helpCenterAgent.url}
               protocolVersion: 0.3.0
               version: 1.0.0
               capabilities:
@@ -42,7 +42,7 @@ registry:
                   outputModes:
                     - application/json
                     - text/plain
-    license_procurement_agent:
+    licenseProcurementAgent:
       info:
         label: License Procurement Agent
       metadata:
@@ -52,7 +52,7 @@ registry:
             card:
               name: License Procurement Agent
               description: Checks software license availability and provisions licenses for employees.
-              url: ${license_procurement_agent_connection.url}
+              url: ${licenseProcurementAgent.url}
               protocolVersion: 0.3.0
               version: 1.0.0
               capabilities:
@@ -81,14 +81,14 @@ registry:
                     - application/json
                     - text/plain
   mcps:
-    escalation_mcp:
+    escalationMcp:
       info:
         label: Escalation MCP Server
       metadata:
         transport:
           kind: streamableHttp
           path: /mcp
-    jira_mcp:
+    jiraMcp:
       info:
         label: Jira MCP Server
       metadata:
@@ -96,14 +96,9 @@ registry:
           kind: streamableHttp
           path: /mcp
   llms:
-    openai_mini:
+    openAiMini:
       info:
-        label: GPT-5.4 Mini
-      metadata:
-        platform: OpenAI
-    bedrock_openai:
-      info:
-        label: Bedrock OpenAI
+        label: GPT Mini
       metadata:
         platform: OpenAI
 context:
@@ -111,27 +106,42 @@ context:
     help_center_agent_connection:
       kind: a2a
       ref:
-        name: help_center_agent
-      url: https://www.a2d-ai.com/api/platform/a626be9a-c2e8-4c66-b927-08b364d7814d/a2a
+        name: helpCenterAgent
+      url: ${helpCenterAgent.url}
     license_procurement_agent_connection:
       kind: a2a
       ref:
-        name: license_procurement_agent
-      url: https://www.a2d-ai.com/api/platform/de8ab8b5-a2c7-470b-91ba-99ccf191734c/a2a
+        name: licenseProcurementAgent
+      url: ${licenseProcurementAgent.url}
+      authentication:
+        kind: oauth2-client-credentials
+        clientId: ${licenseProcurementAgent.clientId}
+        clientSecret: ${licenseProcurementAgent.clientSecret}
+        token:
+          url: ${licenseProcurementAgent.tokenUrl}
     escalation_mcp_connection:
       kind: mcp
       ref:
-        name: escalation_mcp
-      url: https://www.a2d-ai.com/api/platform/7d7ed142-32b5-4589-a285-0da266b85e25/
+        name: escalationMcp
+      url: ${escalationMcp.url}
+      authentication:
+        kind: apiKey
+        apiKey: ${escalationMcp.apiKey}
     jira_mcp_connection:
       kind: mcp
       ref:
-        name: jira_mcp
-      url: https://www.a2d-ai.com/api/platform/b57202bb-baa0-4b96-aa82-eeb178303da8/
+        name: jiraMcp
+      url: ${jiraMcp.url}
+      authentication:
+        kind: oauth2-obo
+        flow: oauth2-token-exchange
+        clientId: ${jiraMcp.clientId}
+        clientSecret: ${jiraMcp.clientSecret}
+        tokenEndpoint: ${jiraMcp.tokenUrl}
     openai_mini_connection:
       kind: llm
       ref:
-        name: openai_mini
+        name: openAiMini
       url: https://api.openai.com/v1
       authentication:
         kind: apiKey

@@ -24,21 +24,6 @@
           "description": "License Procurement Agent A2A URL",
           "default": "",
           "secret": false
-        },
-        "tokenUrl": {
-          "description": "OAuth2 token endpoint for the License Procurement agent (client credentials grant)",
-          "default": "",
-          "secret": false
-        },
-        "clientId": {
-          "description": "OAuth2 client ID the broker presents to the License Procurement agent",
-          "default": "",
-          "secret": false
-        },
-        "clientSecret": {
-          "description": "OAuth2 client secret -- inject at deploy time via --property, never commit a default value",
-          "default": "",
-          "secret": true
         }
       },
       "escalationMcp": {
@@ -46,11 +31,6 @@
           "description": "Escalation MCP Server URL",
           "default": "",
           "secret": false
-        },
-        "apiKey": {
-          "description": "API key for the Escalation MCP server -- inject at deploy time, never commit a default value",
-          "default": "",
-          "secret": true
         }
       },
       "jiraMcp": {
@@ -58,21 +38,6 @@
           "description": "Jira MCP Server URL (called on-behalf-of the inbound user)",
           "default": "",
           "secret": false
-        },
-        "tokenUrl": {
-          "description": "OAuth2 token endpoint Jira accepts for the OBO token exchange",
-          "default": "",
-          "secret": false
-        },
-        "clientId": {
-          "description": "OAuth2 client ID the broker uses to perform the OBO exchange with Jira",
-          "default": "",
-          "secret": false
-        },
-        "clientSecret": {
-          "description": "OAuth2 client secret for the Jira OBO exchange -- inject at deploy time, never commit a default value",
-          "default": "",
-          "secret": true
         }
       },
       "openai": {

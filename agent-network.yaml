@@ -113,31 +113,16 @@ context:
       ref:
         name: licenseProcurementAgent
       url: ${licenseProcurementAgent.url}
-      authentication:
-        kind: oauth2-client-credentials
-        clientId: ${licenseProcurementAgent.clientId}
-        clientSecret: ${licenseProcurementAgent.clientSecret}
-        token:
-          url: ${licenseProcurementAgent.tokenUrl}
     escalation_mcp_connection:
       kind: mcp
       ref:
         name: escalationMcp
       url: ${escalationMcp.url}
-      authentication:
-        kind: apiKey
-        apiKey: ${escalationMcp.apiKey}
     jira_mcp_connection:
       kind: mcp
       ref:
         name: jiraMcp
       url: ${jiraMcp.url}
-      authentication:
-        kind: oauth2-obo
-        flow: oauth2-token-exchange
-        clientId: ${jiraMcp.clientId}
-        clientSecret: ${jiraMcp.clientSecret}
-        tokenEndpoint: ${jiraMcp.tokenUrl}
     openai_mini_connection:
       kind: llm
       ref:

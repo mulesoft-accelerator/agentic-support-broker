@@ -1,22 +1,16 @@
 # @dialect: AGENTFABRIC=1.0
-
 system:
   instructions: "You are an IT Help Desk agent. You triage incoming support tickets, classify their severity, and either escalate, investigate, or request more information."
 
 config:
-  agent_name: "it_help_investigation"
+  agent_name: "it-help-investigation"
   default_llm: @llm.openai_mini
 
 llm:
   openai_mini:
     target: "llm://openai_mini_connection"
     kind: "OpenAI"
-    model: "gpt-5.4-mini"
-
-  # bedrock_openai:
-  #   target: "llm://bedrock_openai_connection"
-  #   kind: "OpenAI"
-  #   model: "openai.gpt-5.5"
+    model: "gpt-5-mini"
 
 # -- ACTION DEFINITIONS -------------------------------------------------------
 actions:
@@ -33,12 +27,10 @@ actions:
     kind: "mcp:tool"
     tool_name: "escalate"
 
-  update_issue:
+  updateIssue:
     target: "mcp://jira_mcp_connection"
     kind: "mcp:tool"
     tool_name: "updateIssue"
-
-
 
 # -- TRIGGER -------------------------------------------------------------------
 trigger ticketTrigger:
@@ -47,12 +39,11 @@ trigger ticketTrigger:
   on_message: ->
     transition to @generator.classifySeverity
 
-
 # -- SEVERITY CLASSIFICATION ---------------------------------------------------
 generator classifySeverity:
   description: "Classifies the severity of the support ticket."
   label: "Classify Severity"
-  # llm: llm.openai_mini
+  llm: @llm.openai_mini
   system:
     instructions: |
       Classify the severity of the incoming IT support ticket and extract the Jira ticket ID.
@@ -88,7 +79,6 @@ generator classifySeverity:
   on_exit: ->
     transition to @router.severityRouter
 
-
 # -- SEVERITY ROUTING ----------------------------------------------------------
 router severityRouter:
   description: "Routes based on the classified severity."
@@ -98,7 +88,6 @@ router severityRouter:
       label: "High"
   otherwise:
     target: @orchestrator.crossPlatformTriage
-
 
 # -- HIGH: ESCALATION ---------------------------------------------------------
 executor escalateTicket:
@@ -113,11 +102,11 @@ echo escalationResponse:
   state: "TASK_STATE_COMPLETED"
   message: a2a.message({messageId: uuid(), parts: [a2a.textPart("Ticket " + @generator.classifySeverity.output.ticket_id + " has been escalated to the on-call team due to high severity: " + @generator.classifySeverity.output.reason)]})
 
-
 # -- LOW: CROSS-PLATFORM TRIAGE -----------------------------------------------
 orchestrator crossPlatformTriage:
   description: "Investigates the ticket using Help Center and License Procurement agents."
   label: "Cross-Platform Triage"
+  llm: @llm.openai_mini
   system:
     instructions: |
       Investigate this low-severity IT support ticket.
@@ -134,7 +123,8 @@ orchestrator crossPlatformTriage:
     actions:
       search_help: @actions.help_center_agent
       check_license: @actions.license_procurement_agent
-      update_ticket: @actions.update_issue
+      update_ticket: @actions.updateIssue
+        with http_headers = {"Authorization": @request.headers["Authorization"]}
     outputs:
       properties:
         resolution:
@@ -150,7 +140,6 @@ orchestrator crossPlatformTriage:
   on_exit: ->
     transition to @router.resolutionRouter
 
-
 # -- RESOLUTION ROUTING --------------------------------------------------------
 router resolutionRouter:
   description: "Routes based on the resolution type from triage."
@@ -163,7 +152,6 @@ router resolutionRouter:
       label: "Unresolved"
   otherwise:
     target: @generator.helpSummary
-
 
 # -- HELP GIVEN PATH ----------------------------------------------------------
 generator helpSummary:
@@ -180,7 +168,6 @@ echo helpResponse:
   state: "TASK_STATE_COMPLETED"
   message: a2a.message({messageId: uuid(), parts: [a2a.textPart(@generator.helpSummary.output)]})
 
-
 # -- LICENSE GIVEN PATH --------------------------------------------------------
 generator licenseSummary:
   description: "Generates a summary of the license provisioning."
@@ -195,7 +182,6 @@ echo licenseResponse:
   kind: "a2a:status_update_event"
   state: "TASK_STATE_COMPLETED"
   message: a2a.message({messageId: uuid(), parts: [a2a.textPart(@generator.licenseSummary.output)]})
-
 
 # -- UNRESOLVED PATH -----------------------------------------------------------
 executor escalateUnresolved:

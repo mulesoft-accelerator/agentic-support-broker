@@ -132,7 +132,7 @@ context:
         kind: apiKey
         apiKey: ${openai.apiKey}
 brokers:
-  it-help-investigation:
+  it_help_investigation:
     kind: AgentScript
     implementation: ./brokers/it-help-investigation.agent
     interfaces:
@@ -142,10 +142,10 @@ brokers:
           description: Triages IT support tickets, escalates critical issues, and resolves common problems through cross-platform investigation.
           version: 1.0.0
           supportedInterfaces:
-            - url: http://localhost:8001/it-help-investigation/
+            - url: http://localhost:8001/it_help_investigation/
               protocolVersion: "1.0"
               protocolBinding: HTTP+JSON
-            - url: http://localhost:8001/it-help-investigation/
+            - url: http://localhost:8001/it_help_investigation/
               protocolVersion: "1.0"
               protocolBinding: JSONRPC
           capabilities:
